@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
 import { User } from '../types';
+import { mockUsers, testAccounts } from '../data/mockData';
 import toast from 'react-hot-toast';
 
 interface AuthContextType {
@@ -18,78 +18,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        await fetchUserProfile(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check for stored user session
+    const storedUser = localStorage.getItem('akwareg_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
   }, []);
 
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) throw error;
-      setUser(data);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      toast.error('Failed to load user profile');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      throw new Error(error.message);
+    // Mock authentication - check against test accounts
+    const account = Object.values(testAccounts).find(
+      acc => acc.email === email && acc.password === password
+    );
+    
+    if (!account) {
+      throw new Error('Invalid email or password');
     }
+    
+    setUser(account.user);
+    localStorage.setItem('akwareg_user', JSON.stringify(account.user));
   };
 
   const signUp = async (email: string, password: string, userData: any) => {
-    const { data, error } = await supabase.auth.signUp({
+    // Mock user creation
+    const newUser: User = {
+      id: Date.now().toString(),
       email,
-      password,
-    });
+      ...userData,
+      is_verified: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    
+    // In a real app, this would be saved to the backend
+    mockUsers.push(newUser);
+    
+    // Auto sign in the new user
+    setUser(newUser);
+    localStorage.setItem('akwareg_user', JSON.stringify(newUser));
+  };
 
-    if (error) throw new Error(error.message);
+  const signOut = async () => {
+    setUser(null);
+    localStorage.removeItem('akwareg_user');
+  };
 
-    if (data.user) {
-      // Create user profile
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert({
-          id: data.user.id,
-          email: data.user.email,
-          ...userData,
-        });
+  return (
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
 
-      if (profileError) {
-        throw new Error('Failed to create user profile');
-      }
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
     }
   };
 

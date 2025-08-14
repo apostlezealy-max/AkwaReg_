@@ -1,0 +1,463 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { 
+  Shield, 
+  Building2, 
+  Users, 
+  CheckCircle, 
+  Clock, 
+  AlertCircle,
+  Eye,
+  FileText,
+  MessageCircle,
+  TrendingUp
+} from 'lucide-react';
+import { Property, User } from '../types';
+import { mockProperties, mockUsers, mockStats } from '../data/mockData';
+import toast from 'react-hot-toast';
+
+export function Admin() {
+  const { user } = useAuth();
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users'>('overview');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    setProperties(mockProperties);
+    setUsers(mockUsers);
+    setLoading(false);
+  };
+
+  const handlePropertyAction = (propertyId: string, action: 'approve' | 'reject', notes?: string) => {
+    setProperties(prev => prev.map(property => {
+      if (property.id === propertyId) {
+        return {
+          ...property,
+          status: action === 'approve' ? 'approved' : 'rejected',
+          verification_notes: notes || (action === 'approve' ? 'Property approved by government official' : 'Property rejected'),
+          verified_by: user?.id,
+          verified_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+      }
+      return property;
+    }));
+    
+    toast.success(`Property ${action}d successfully`);
+    setSelectedProperty(null);
+  };
+
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      under_review: 'bg-blue-100 text-blue-800',
+      approved: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800',
+    };
+    return badges[status as keyof typeof badges] || 'bg-gray-100 text-gray-800';
+  };
+
+  const getStatusIcon = (status: string) => {
+    const icons = {
+      pending: Clock,
+      under_review: AlertCircle,
+      approved: CheckCircle,
+      rejected: AlertCircle,
+    };
+    const Icon = icons[status as keyof typeof icons] || Clock;
+    return <Icon className="h-4 w-4" />;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      </div>
+    );
+  }
+
+  if (user?.role !== 'government_official' && user?.role !== 'admin') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-12">
+          <Shield className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Access Denied</h3>
+          <p className="text-gray-600">
+            You don't have permission to access the admin panel.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Administrative Panel
+        </h1>
+        <p className="text-gray-600">
+          Manage property verifications and system oversight.
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <div className="mb-8">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'overview'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('properties')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'properties'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Properties
+            </button>
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'users'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Users
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {/* Overview Tab */}
+      {activeTab === 'overview' && (
+        <div className="space-y-8">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center">
+                <div className="bg-emerald-100 p-3 rounded-lg">
+                  <Building2 className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Total Properties</p>
+                  <p className="text-2xl font-bold text-gray-900">{mockStats.totalProperties}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center">
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Approved</p>
+                  <p className="text-2xl font-bold text-gray-900">{mockStats.approvedProperties}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center">
+                <div className="bg-yellow-100 p-3 rounded-lg">
+                  <Clock className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Pending Review</p>
+                  <p className="text-2xl font-bold text-gray-900">{mockStats.pendingProperties}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center">
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Total Users</p>
+                  <p className="text-2xl font-bold text-gray-900">{mockStats.totalUsers}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Properties Needing Review */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="px-6 py-4 border-b border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-900">Properties Needing Review</h2>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {properties.filter(p => p.status === 'pending' || p.status === 'under_review').slice(0, 5).map((property) => (
+                  <div
+                    key={property.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <Building2 className="h-5 w-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{property.title}</h3>
+                        <p className="text-sm text-gray-600">{property.address}, {property.lga}</p>
+                        <p className="text-xs text-gray-500">Owner: {property.owner?.full_name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(property.status)}`}>
+                        <div className="flex items-center space-x-1">
+                          {getStatusIcon(property.status)}
+                          <span className="capitalize">{property.status.replace('_', ' ')}</span>
+                        </div>
+                      </span>
+                      <button
+                        onClick={() => setSelectedProperty(property)}
+                        className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                      >
+                        Review
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Properties Tab */}
+      {activeTab === 'properties' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900">All Properties</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Property
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Owner
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {properties.map((property) => (
+                  <tr key={property.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <p className="font-medium text-gray-900">{property.title}</p>
+                        <p className="text-sm text-gray-600">{property.address}, {property.lga}</p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <p className="text-sm text-gray-900">{property.owner?.full_name}</p>
+                      <p className="text-sm text-gray-600">{property.owner?.email}</p>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(property.status)}`}>
+                        <div className="flex items-center space-x-1">
+                          {getStatusIcon(property.status)}
+                          <span className="capitalize">{property.status.replace('_', ' ')}</span>
+                        </div>
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {new Date(property.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => setSelectedProperty(property)}
+                        className="text-emerald-600 hover:text-emerald-700 mr-3"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Users Tab */}
+      {activeTab === 'users' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900">All Users</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Joined
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {users.map((user) => (
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <p className="font-medium text-gray-900">{user.full_name}</p>
+                        <p className="text-sm text-gray-600">{user.email}</p>
+                        <p className="text-sm text-gray-600">{user.phone}</p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
+                        {user.role.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        user.is_verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {user.is_verified ? 'Verified' : 'Pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Property Review Modal */}
+      {selectedProperty && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Review Property: {selectedProperty.title}
+              </h3>
+              
+              <div className="space-y-4 mb-6">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Address</p>
+                  <p className="text-gray-900">{selectedProperty.address}, {selectedProperty.lga}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Owner</p>
+                  <p className="text-gray-900">{selectedProperty.owner?.full_name}</p>
+                  <p className="text-sm text-gray-600">{selectedProperty.owner?.email}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Description</p>
+                  <p className="text-gray-900">{selectedProperty.description}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Type</p>
+                    <p className="text-gray-900 capitalize">{selectedProperty.property_type}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Size</p>
+                    <p className="text-gray-900">{selectedProperty.size_sqm.toLocaleString()} sqm</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Documents</p>
+                  <div className="space-y-2">
+                    {selectedProperty.documents.map((doc) => (
+                      <div key={doc.id} className="flex items-center space-x-2 p-2 bg-gray-50 rounded">
+                        <FileText className="h-4 w-4 text-emerald-600" />
+                        <span className="text-sm text-gray-700 capitalize">
+                          {doc.document_type.replace('_', ' ')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              {selectedProperty.status === 'pending' || selectedProperty.status === 'under_review' ? (
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handlePropertyAction(selectedProperty.id, 'reject')}
+                    className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    onClick={() => handlePropertyAction(selectedProperty.id, 'approve')}
+                    className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Approve
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-600">
+                    This property has already been {selectedProperty.status}.
+                  </p>
+                  {selectedProperty.verification_notes && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      Notes: {selectedProperty.verification_notes}
+                    </p>
+                  )}
+                </div>
+              )}
+              
+              <button
+                onClick={() => setSelectedProperty(null)}
+                className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

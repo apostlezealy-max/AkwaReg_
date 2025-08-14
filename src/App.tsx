@@ -6,6 +6,11 @@ import { Layout } from './components/Layout/Layout';
 import { Home } from './pages/Home';
 import { Auth } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
+import { Properties } from './pages/Properties';
+import { PropertyDetails } from './pages/PropertyDetails';
+import { Messages } from './pages/Messages';
+import { RegisterProperty } from './pages/RegisterProperty';
+import { Admin } from './pages/Admin';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -48,6 +53,8 @@ function AppContent() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/properties" element={<Properties />} />
+        <Route path="/property/:id" element={<PropertyDetails />} />
         <Route 
           path="/auth" 
           element={
@@ -61,6 +68,30 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/messages" 
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/register-property" 
+          element={
+            <ProtectedRoute>
+              <RegisterProperty />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <Admin />
             </ProtectedRoute>
           } 
         />

@@ -11,51 +11,49 @@ import {
   MessageCircle,
   Shield
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { Property } from '../types';
+import { Property, Message } from '../types';
+import { mockProperties, mockMessages, mockStats } from '../data/mockData';
 
 export function Dashboard() {
   const { user } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
     approved: 0,
     rejected: 0,
+    under_review: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
-      fetchUserProperties();
+      loadUserData();
     }
   }, [user]);
 
-  const fetchUserProperties = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('owner_id', user?.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setProperties(data || []);
-      
-      // Calculate stats
-      const stats = data?.reduce((acc, property) => {
-        acc.total++;
-        acc[property.status as keyof typeof acc]++;
-        return acc;
-      }, { total: 0, pending: 0, approved: 0, rejected: 0, under_review: 0 }) || { total: 0, pending: 0, approved: 0, rejected: 0 };
-
-      setStats(stats);
-    } catch (error) {
-      console.error('Error fetching properties:', error);
-    } finally {
-      setLoading(false);
-    }
+  const loadUserData = () => {
+    // Filter properties for current user
+    const userProperties = mockProperties.filter(p => p.owner_id === user?.id);
+    setProperties(userProperties);
+    
+    // Calculate user stats
+    const userStats = userProperties.reduce((acc, property) => {
+      acc.total++;
+      acc[property.status as keyof typeof acc]++;
+      return acc;
+    }, { total: 0, pending: 0, approved: 0, rejected: 0, under_review: 0 });
+    
+    setStats(userStats);
+    
+    // Filter messages for current user
+    const userMessages = mockMessages.filter(
+      m => m.sender_id === user?.id || m.receiver_id === user?.id
+    );
+    setMessages(userMessages);
+    
+    setLoading(false);
   };
 
   const getStatusBadge = (status: string) => {
@@ -139,12 +137,12 @@ export function Dashboard() {
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center">
-            <div className="bg-red-100 p-3 rounded-lg">
-              <AlertCircle className="h-6 w-6 text-red-600" />
+            <div className="bg-blue-100 p-3 rounded-lg">
+              <AlertCircle className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Rejected</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.rejected}</p>
+              <p className="text-sm font-medium text-gray-600">Under Review</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.under_review}</p>
             </div>
           </div>
         </div>
@@ -221,6 +219,11 @@ export function Dashboard() {
                     <div>
                       <h3 className="font-semibold text-gray-900">{property.title}</h3>
                       <p className="text-sm text-gray-600">{property.address}, {property.lga}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {property.is_for_sale && `₦${property.price?.toLocaleString()}`}
+                        {property.is_for_sale && property.is_for_lease && ' • '}
+                        {property.is_for_lease && `₦${property.lease_price_annual?.toLocaleString()}/year`}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
@@ -256,6 +259,55 @@ export function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Recent Messages */}
+      {messages.length > 0 && (
+        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">Recent Messages</h2>
+              <Link
+                to="/messages"
+                className="text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+              >
+                View All
+              </Link>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="space-y-4">
+              {messages.slice(0, 3).map((message) => (
+                <div
+                  key={message.id}
+                  className={`p-4 rounded-lg border ${
+                    !message.is_read && message.receiver_id === user?.id
+                      ? 'bg-emerald-50 border-emerald-200'
+                      : 'bg-gray-50 border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <p className="font-semibold text-gray-900">
+                          {message.sender_id === user?.id ? 'You' : message.sender?.full_name}
+                        </p>
+                        <span className="text-xs text-gray-500">
+                          {new Date(message.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 text-sm">{message.content}</p>
+                    </div>
+                    {!message.is_read && message.receiver_id === user?.id && (
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Admin Section for Officials */}
       {(user?.role === 'government_official' || user?.role === 'admin') && (

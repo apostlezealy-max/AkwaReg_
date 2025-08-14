@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, Shield, Search, MessageCircle, CheckCircle, Users } from 'lucide-react';
+import { mockStats } from '../data/mockData';
 
 export function Home() {
   const features = [
@@ -27,10 +28,10 @@ export function Home() {
   ];
 
   const stats = [
-    { label: 'Properties Registered', value: '2,847' },
-    { label: 'Verified Owners', value: '1,923' },
-    { label: 'Government Officials', value: '48' },
-    { label: 'Successful Transactions', value: '1,205' },
+    { label: 'Properties Registered', value: mockStats.totalProperties.toString() },
+    { label: 'Verified Owners', value: mockStats.propertyOwners.toString() },
+    { label: 'Government Officials', value: mockStats.governmentOfficials.toString() },
+    { label: 'Properties For Sale', value: mockStats.propertiesForSale.toString() },
   ];
 
   return (
