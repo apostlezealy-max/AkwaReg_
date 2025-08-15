@@ -18,14 +18,14 @@ import {
   MapPin,
   Square
 } from 'lucide-react';
-import { Property, User } from '../types';
+import { Property, User as UserType } from '../types';
 import { mockProperties, mockUsers, mockStats } from '../data/mockData';
 import toast from 'react-hot-toast';
 
 export function Admin() {
   const { user } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users' | 'registered' | 'listed'>('overview');
   const [searchTerm, setSearchTerm] = useState('');
