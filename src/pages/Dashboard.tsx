@@ -57,7 +57,7 @@ export default function Dashboard() {
     },
     {
       title: 'Revenue',
-      value: '$125,000',
+      value: '$125,000,',
       icon: BarChart3,
       color: 'bg-orange-500',
     },
@@ -96,7 +96,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-md">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Registered Properties</h2>
+              <h2 className="text-xl font-semibold text-gray-900">My Registered Properties</h2>
               <span className="text-sm text-gray-600">
                 {getRegisteredProperties().length} properties
               </span>
@@ -148,12 +148,12 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-md">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Listed Properties</h2>
+              <h2 className="text-xl font-semibold text-gray-900">My Listed Properties</h2>
               <span className="text-sm text-gray-600">
                 {getListedProperties().length} properties
               </span>
             </div>
-            <p className="text-sm text-gray-500 mt-1">Properties available for sale or lease</p>
+            <p className="text-sm text-gray-500 mt-1">My Properties listed for sale or lease</p>
           </div>
           <div className="p-6">
             <div className="space-y-4">
