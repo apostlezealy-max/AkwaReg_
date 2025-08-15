@@ -150,7 +150,7 @@ export function Admin() {
       {activeTab === 'overview' && (
         <div className="space-y-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center">
                 <div className="bg-emerald-100 p-3 rounded-lg">
@@ -158,7 +158,12 @@ export function Admin() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Properties</p>
-                  <p className="text-2xl font-bold text-gray-900">{mockStats.totalProperties}</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-2xl font-bold text-gray-900">{mockStats.totalProperties}</p>
+                    <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                      +{mockStats.monthlyGrowth.properties}%
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -170,7 +175,12 @@ export function Admin() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Approved</p>
-                  <p className="text-2xl font-bold text-gray-900">{mockStats.approvedProperties}</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-2xl font-bold text-gray-900">{mockStats.approvedProperties}</p>
+                    <span className="text-xs text-green-600">
+                      {Math.round((mockStats.approvedProperties / mockStats.totalProperties) * 100)}% rate
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -182,7 +192,12 @@ export function Admin() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Pending Review</p>
-                  <p className="text-2xl font-bold text-gray-900">{mockStats.pendingProperties}</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-2xl font-bold text-gray-900">{mockStats.pendingProperties + mockStats.underReviewProperties}</p>
+                    <span className="text-xs text-yellow-600">
+                      Avg. 4.2 days
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -193,8 +208,78 @@ export function Admin() {
                   <Users className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-2xl font-bold text-gray-900">{mockStats.totalUsers}</p>
+                  <p className="text-sm font-medium text-gray-600">Active Users</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-2xl font-bold text-gray-900">{mockStats.systemHealth.activeUsers}</p>
+                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                      +{mockStats.monthlyGrowth.users}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Stats Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Distribution</h3>
+              <div className="space-y-3">
+                {Object.entries(mockStats.propertyTypeStats).map(([type, count]) => (
+                  <div key={type} className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 capitalize">{type}</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-emerald-600 h-2 rounded-full" 
+                          style={{ width: `${(count / mockStats.totalProperties) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{count}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">LGA Coverage</h3>
+              <div className="space-y-3">
+                {Object.entries(mockStats.lgaStats).slice(0, 5).map(([lga, count]) => (
+                  <div key={lga} className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">{lga}</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-16 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-600 h-2 rounded-full" 
+                          style={{ width: `${(count / mockStats.totalProperties) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{count}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">System Health</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Uptime</span>
+                  <span className="text-sm font-medium text-green-600">{mockStats.systemHealth.uptime}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Response Time</span>
+                  <span className="text-sm font-medium text-gray-900">{mockStats.systemHealth.responseTime}ms</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Daily Transactions</span>
+                  <span className="text-sm font-medium text-gray-900">{mockStats.systemHealth.dailyTransactions}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Growth Rate</span>
+                  <span className="text-sm font-medium text-emerald-600">+{mockStats.monthlyGrowth.transactions}%</span>
                 </div>
               </div>
             </div>

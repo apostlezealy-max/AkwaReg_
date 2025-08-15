@@ -98,7 +98,7 @@ export function Dashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center">
             <div className="bg-emerald-100 p-3 rounded-lg">
@@ -106,7 +106,12 @@ export function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Properties</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <div className="flex items-center space-x-2">
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                  +{mockStats.propertiesThisMonth} this month
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -118,7 +123,12 @@ export function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+              <div className="flex items-center space-x-2">
+                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+                <span className="text-xs text-yellow-600">
+                  Avg. 3-5 days
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -130,7 +140,12 @@ export function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Approved</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
+              <div className="flex items-center space-x-2">
+                <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
+                <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                  +{mockStats.verificationsThisWeek} this week
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -138,11 +153,18 @@ export function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center">
             <div className="bg-blue-100 p-3 rounded-lg">
-              <AlertCircle className="h-6 w-6 text-blue-600" />
+              <TrendingUp className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Under Review</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.under_review}</p>
+              <p className="text-sm font-medium text-gray-600">Portfolio Value</p>
+              <div className="flex items-center space-x-2">
+                <p className="text-2xl font-bold text-gray-900">
+                  ₦{((properties.filter(p => p.price).reduce((sum, p) => sum + (p.price || 0), 0)) / 1000000).toFixed(0)}M
+                </p>
+                <span className="text-xs text-blue-600">
+                  +15.2%
+                </span>
+              </div>
             </div>
           </div>
         </div>

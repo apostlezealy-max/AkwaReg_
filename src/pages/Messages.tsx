@@ -148,7 +148,17 @@ export function Messages() {
           <div className="w-1/3 border-r border-gray-200 flex flex-col">
             {/* Header */}
             <div className="p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Messages</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full">
+                    {conversations.reduce((sum, conv) => sum + conv.unreadCount, 0)} unread
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {conversations.length} conversations
+                  </span>
+                </div>
+              </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input

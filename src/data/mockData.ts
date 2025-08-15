@@ -261,11 +261,66 @@ export const mockStats = {
   approvedProperties: mockProperties.filter(p => p.status === 'approved').length,
   pendingProperties: mockProperties.filter(p => p.status === 'pending').length,
   underReviewProperties: mockProperties.filter(p => p.status === 'under_review').length,
+  rejectedProperties: mockProperties.filter(p => p.status === 'rejected').length,
   totalUsers: mockUsers.length,
   propertyOwners: mockUsers.filter(u => u.role === 'property_owner').length,
   governmentOfficials: mockUsers.filter(u => u.role === 'government_official').length,
+  adminUsers: mockUsers.filter(u => u.role === 'admin').length,
   propertiesForSale: mockProperties.filter(p => p.is_for_sale).length,
   propertiesForLease: mockProperties.filter(p => p.is_for_lease).length,
+  // Enhanced stats
+  totalPropertyValue: mockProperties
+    .filter(p => p.price)
+    .reduce((sum, p) => sum + (p.price || 0), 0),
+  averagePropertyPrice: Math.round(
+    mockProperties
+      .filter(p => p.price)
+      .reduce((sum, p) => sum + (p.price || 0), 0) / 
+    mockProperties.filter(p => p.price).length
+  ),
+  totalMessages: mockMessages.length,
+  unreadMessages: mockMessages.filter(m => !m.is_read).length,
+  propertiesThisMonth: mockProperties.filter(p => {
+    const created = new Date(p.created_at);
+    const now = new Date();
+    return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+  }).length,
+  verificationsThisWeek: mockProperties.filter(p => {
+    if (!p.verified_at) return false;
+    const verified = new Date(p.verified_at);
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return verified >= weekAgo;
+  }).length,
+  // LGA distribution
+  lgaStats: {
+    'Uyo': mockProperties.filter(p => p.lga === 'Uyo').length,
+    'Ikot Abasi': mockProperties.filter(p => p.lga === 'Ikot Abasi').length,
+    'Eket': mockProperties.filter(p => p.lga === 'Eket').length,
+    'Oron': mockProperties.filter(p => p.lga === 'Oron').length,
+    'Ikot Ekpene': mockProperties.filter(p => p.lga === 'Ikot Ekpene').length,
+  },
+  // Property type distribution
+  propertyTypeStats: {
+    residential: mockProperties.filter(p => p.property_type === 'residential').length,
+    commercial: mockProperties.filter(p => p.property_type === 'commercial').length,
+    land: mockProperties.filter(p => p.property_type === 'land').length,
+    building: mockProperties.filter(p => p.property_type === 'building').length,
+  },
+  // Growth metrics (simulated)
+  monthlyGrowth: {
+    properties: 12.5, // percentage
+    users: 8.3,
+    verifications: 15.7,
+    transactions: 22.1,
+  },
+  // System health
+  systemHealth: {
+    uptime: 99.8,
+    responseTime: 145, // ms
+    activeUsers: 1247,
+    dailyTransactions: 89,
+  },
 };
 
 // Test accounts for easy login

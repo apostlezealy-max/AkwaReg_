@@ -250,9 +250,16 @@ export function Properties() {
 
       {/* Results Count */}
       <div className="mb-6">
-        <p className="text-gray-600">
-          Showing {filteredProperties.length} of {properties.length} properties
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-gray-600">
+            Showing {filteredProperties.length} of {properties.length} properties
+          </p>
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <span>Total Value: ₦{(mockStats.totalPropertyValue / 1000000000).toFixed(1)}B</span>
+            <span>•</span>
+            <span>Avg. Price: ₦{(mockStats.averagePropertyPrice / 1000000).toFixed(1)}M</span>
+          </div>
+        </div>
       </div>
 
       {/* Properties Grid */}

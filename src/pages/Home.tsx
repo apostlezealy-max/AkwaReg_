@@ -28,10 +28,10 @@ export function Home() {
   ];
 
   const stats = [
-    { label: 'Properties Registered', value: mockStats.totalProperties.toString() },
-    { label: 'Verified Owners', value: mockStats.propertyOwners.toString() },
-    { label: 'Government Officials', value: mockStats.governmentOfficials.toString() },
-    { label: 'Properties For Sale', value: mockStats.propertiesForSale.toString() },
+    { label: 'Properties Registered', value: mockStats.totalProperties.toString(), growth: '+12.5%' },
+    { label: 'Verified Owners', value: mockStats.propertyOwners.toString(), growth: '+8.3%' },
+    { label: 'Total Property Value', value: `₦${(mockStats.totalPropertyValue / 1000000000).toFixed(1)}B`, growth: '+22.1%' },
+    { label: 'Active This Month', value: mockStats.systemHealth.activeUsers.toString(), growth: '+15.7%' },
   ];
 
   return (
@@ -78,8 +78,11 @@ export function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">
+                <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-1">
                   {stat.value}
+                </div>
+                <div className="text-sm text-emerald-500 font-medium mb-1">
+                  {stat.growth}
                 </div>
                 <div className="text-gray-600 font-medium">{stat.label}</div>
               </div>
