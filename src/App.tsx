@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Layout } from './components/Layout/Layout';
 import { Home } from './pages/Home';
 import { Auth } from './pages/Auth';
-import { Dashboard } from './pages/Dashboard';
+import Dashboard from './pages/Dashboard';
 import { Properties } from './pages/Properties';
 import { PropertyDetails } from './pages/PropertyDetails';
 import { Messages } from './pages/Messages';
