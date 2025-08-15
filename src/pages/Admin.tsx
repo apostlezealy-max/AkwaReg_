@@ -16,7 +16,9 @@ import {
   Phone,
   Mail,
   MapPin,
-  Square
+  Square,
+  AlertTriangle,
+  Send
 } from 'lucide-react';
 import { Property, User as UserType } from '../types';
 import { mockProperties, mockUsers, mockStats } from '../data/mockData';
@@ -27,9 +29,12 @@ export function Admin() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [users, setUsers] = useState<UserType[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users' | 'registered' | 'listed'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users' | 'registered' | 'listed' | 'updates'>('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPropertyForInquiry, setSelectedPropertyForInquiry] = useState<Property | null>(null);
+  const [selectedUpdateRequest, setSelectedUpdateRequest] = useState<Property | null>(null);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactMessage, setContactMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,6 +66,45 @@ export function Admin() {
     setSelectedProperty(null);
   };
 
+  const handleUpdateRequest = (propertyId: string, action: 'approve' | 'reject', adminNotes?: string) => {
+    setProperties(prev => prev.map(property => {
+      if (property.id === propertyId && property.update_request) {
+        const updatedProperty = { ...property };
+        
+        if (action === 'approve') {
+          updatedProperty.availability_status = property.update_request.new_status;
+          if (property.update_request.new_status === 'sold') {
+            updatedProperty.sold_at = new Date().toISOString();
+            if (property.update_request.sold_price) {
+              updatedProperty.sold_price = property.update_request.sold_price;
+            }
+          }
+        }
+        
+        updatedProperty.update_request = {
+          ...property.update_request,
+          admin_approved: action === 'approve',
+          admin_notes: adminNotes || `Update request ${action}d by admin`,
+        };
+        
+        return updatedProperty;
+      }
+      return property;
+    }));
+    
+    toast.success(`Update request ${action}d successfully`);
+    setSelectedUpdateRequest(null);
+  };
+
+  const handleContactOwner = () => {
+    if (!contactMessage.trim() || !selectedUpdateRequest) return;
+    
+    // In a real app, this would send a message to the property owner
+    toast.success('Message sent to property owner successfully');
+    setContactMessage('');
+    setShowContactModal(false);
+  };
+
   const getStatusBadge = (status: string) => {
     const badges = {
       pending: 'bg-yellow-100 text-yellow-800',
@@ -88,6 +132,10 @@ export function Admin() {
 
   const getListedProperties = () => {
     return properties.filter(p => p.is_for_sale || p.is_for_lease);
+  };
+
+  const getPropertiesWithUpdateRequests = () => {
+    return properties.filter(p => p.update_request && !p.update_request.admin_approved);
   };
 
   const formatPrice = (price: number) => {
@@ -182,6 +230,21 @@ export function Admin() {
               Listed Properties
             </button>
             <button
+              onClick={() => setActiveTab('updates')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm relative ${
+                activeTab === 'updates'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Update Requests
+              {getPropertiesWithUpdateRequests().length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getPropertiesWithUpdateRequests().length}
+                </span>
+              )}
+            </button>
+            <button
               onClick={() => setActiveTab('users')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'users'
@@ -253,15 +316,15 @@ export function Admin() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center">
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="bg-red-100 p-3 rounded-lg">
+                  <AlertTriangle className="h-6 w-6 text-red-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Active Users</p>
+                  <p className="text-sm font-medium text-gray-600">Update Requests</p>
                   <div className="flex items-center space-x-2">
-                    <p className="text-2xl font-bold text-gray-900">{mockStats.systemHealth.activeUsers}</p>
-                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                      +{mockStats.monthlyGrowth.users}%
+                    <p className="text-2xl font-bold text-gray-900">{getPropertiesWithUpdateRequests().length}</p>
+                    <span className="text-xs text-red-600">
+                      Pending
                     </span>
                   </div>
                 </div>
@@ -632,6 +695,116 @@ export function Admin() {
         </div>
       )}
 
+      {/* Update Requests Tab */}
+      {activeTab === 'updates' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">Property Update Requests</h2>
+                <span className="text-sm text-gray-600">
+                  {getPropertiesWithUpdateRequests().length} pending requests
+                </span>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {getPropertiesWithUpdateRequests().map((property) => (
+                  <div
+                    key={property.id}
+                    className="border border-orange-200 bg-orange-50 rounded-lg p-4"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-orange-100 p-2 rounded-lg">
+                          <AlertTriangle className="h-5 w-5 text-orange-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{property.title}</h3>
+                          <p className="text-sm text-gray-600">{property.address}, {property.lga}</p>
+                          <p className="text-xs text-gray-500">Owner: {property.owner?.full_name}</p>
+                        </div>
+                      </div>
+                      <span className="bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                        Update Request
+                      </span>
+                    </div>
+                    
+                    {property.update_request && (
+                      <div className="bg-white rounded-lg p-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Requested Status</p>
+                            <p className="text-gray-900 capitalize font-semibold">
+                              {property.update_request.new_status}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Requested Date</p>
+                            <p className="text-gray-900">
+                              {new Date(property.update_request.requested_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          {property.update_request.sold_price && (
+                            <div>
+                              <p className="text-sm font-medium text-gray-700">Sale Price</p>
+                              <p className="text-gray-900 font-semibold">
+                                {formatPrice(property.update_request.sold_price)}
+                              </p>
+                            </div>
+                          )}
+                          {property.update_request.reason && (
+                            <div className="md:col-span-2">
+                              <p className="text-sm font-medium text-gray-700">Reason</p>
+                              <p className="text-gray-900">{property.update_request.reason}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => {
+                            setSelectedUpdateRequest(property);
+                            setShowContactModal(true);
+                          }}
+                          className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                          <span>Contact Owner</span>
+                        </button>
+                      </div>
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => handleUpdateRequest(property.id, 'reject')}
+                          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
+                        >
+                          Reject
+                        </button>
+                        <button
+                          onClick={() => handleUpdateRequest(property.id, 'approve')}
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                        >
+                          Approve
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {getPropertiesWithUpdateRequests().length === 0 && (
+                  <div className="text-center py-12">
+                    <CheckCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-600">No pending update requests</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Users Tab */}
       {activeTab === 'users' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -942,6 +1115,47 @@ export function Admin() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contact Owner Modal */}
+      {showContactModal && selectedUpdateRequest && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Contact Property Owner
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Send a message to {selectedUpdateRequest.owner?.full_name} regarding their update request for "{selectedUpdateRequest.title}".
+              </p>
+              <textarea
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
+                placeholder="Type your message here..."
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 mb-4"
+              />
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowContactModal(false);
+                    setContactMessage('');
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleContactOwner}
+                  className="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <Send className="h-4 w-4" />
+                  <span>Send Message</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

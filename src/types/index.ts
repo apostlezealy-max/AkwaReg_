@@ -25,6 +25,7 @@ export interface Property {
   owner_id: string;
   owner?: User;
   status: 'pending' | 'under_review' | 'approved' | 'rejected';
+  availability_status?: 'available' | 'sold' | 'unavailable';
   is_for_sale: boolean;
   is_for_lease: boolean;
   price?: number;
@@ -34,6 +35,15 @@ export interface Property {
   verification_notes?: string;
   verified_by?: string;
   verified_at?: string;
+  sold_at?: string;
+  sold_price?: number;
+  update_request?: {
+    new_status: 'sold' | 'unavailable';
+    reason?: string;
+    requested_at: string;
+    admin_approved?: boolean;
+    admin_notes?: string;
+  };
   created_at: string;
   updated_at: string;
 }
