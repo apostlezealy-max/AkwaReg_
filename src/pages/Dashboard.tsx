@@ -57,7 +57,7 @@ export default function Dashboard() {
     },
     {
       title: 'Revenue',
-      value: '125,000'
+      value: '$125,000',
       icon: BarChart3,
       color: 'bg-orange-500',
     },
