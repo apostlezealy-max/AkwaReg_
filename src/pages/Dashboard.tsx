@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { mockStats, mockProperties, mockUsers } from '../data/mockData';
-import { BarChart3, Users, Home, TrendingUp, Building2 } from 'lucide-react';
+import { BarChart3, Users, Home, TrendingUp, Building2, MapPin, Square, User } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -21,6 +21,21 @@ export default function Dashboard() {
     }
   };
 
+  const getRegisteredProperties = () => {
+    return mockProperties.filter(p => !p.is_for_sale && !p.is_for_lease);
+  };
+
+  const getListedProperties = () => {
+    return mockProperties.filter(p => p.is_for_sale || p.is_for_lease);
+  };
+
+  const formatPrice = (price: number) => {
+    if (price >= 1000000) {
+      return `₦${(price / 1000000).toFixed(1)}M`;
+    }
+    return `₦${price.toLocaleString()}`;
+  };
+
   const stats = [
     {
       title: 'Total Properties',
@@ -36,7 +51,7 @@ export default function Dashboard() {
     },
     {
       title: 'Active Listings',
-      value: mockProperties.filter(p => p.status === 'approved' && (p.is_for_sale || p.is_for_lease)).length,
+      value: getListedProperties().length,
       icon: TrendingUp,
       color: 'bg-purple-500',
     },
@@ -75,47 +90,122 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Recent Properties */}
-      <div className="bg-white rounded-lg shadow-md">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Recent Properties</h2>
-        </div>
-        <div className="p-6">
-          <div className="space-y-4">
-            {mockProperties.slice(0, 5).map((property) => (
-              <div key={property.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                <div className="flex items-center space-x-4">
-                  {property.images && property.images.length > 0 ? (
-                    <img
-                      src={property.images[0]}
-                      alt={property.title}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                      <Building2 className="w-8 h-8 text-gray-400" />
+      {/* Property Categories */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Registered Properties */}
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">Registered Properties</h2>
+              <span className="text-sm text-gray-600">
+                {getRegisteredProperties().length} properties
+              </span>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Properties registered but not listed for sale/lease</p>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {getRegisteredProperties().slice(0, 3).map((property) => (
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <Building2 className="h-4 w-4 text-emerald-600" />
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDashboardStatusBadge(property.status)}`}>
+                        {property.status.replace('_', ' ')}
+                      </span>
                     </div>
-                  )}
-                  <div>
-                    <h3 className="font-medium text-gray-900">{property.title}</h3>
-                    <p className="text-sm text-gray-600">{property.address}, {property.lga}</p>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{property.address}, {property.lga}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Square className="h-3 w-3" />
+                      <span>{property.size_sqm.toLocaleString()} sqm</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <User className="h-3 w-3" />
+                      <span>Owner: {property.owner?.full_name}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-gray-900">
-                    {property.is_for_sale && property.price 
-                      ? `$${property.price.toLocaleString()}`
-                      : property.is_for_lease && property.lease_price_annual
-                      ? `$${property.lease_price_annual.toLocaleString()}/year`
-                      : 'N/A'
-                    }
-                  </p>
-                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getDashboardStatusBadge(property.status)}`}>
-                    {property.status}
-                  </span>
+              ))}
+              {getRegisteredProperties().length === 0 && (
+                <div className="text-center py-8">
+                  <Building2 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600">No registered properties</p>
                 </div>
-              </div>
-            ))}
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Listed Properties */}
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">Listed Properties</h2>
+              <span className="text-sm text-gray-600">
+                {getListedProperties().length} properties
+              </span>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Properties available for sale or lease</p>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {getListedProperties().slice(0, 3).map((property) => (
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <Building2 className="h-4 w-4 text-emerald-600" />
+                      </div>
+                      <div className="flex space-x-1">
+                        {property.is_for_sale && (
+                          <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs">Sale</span>
+                        )}
+                        {property.is_for_lease && (
+                          <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Lease</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
+                  <div className="space-y-1 text-sm text-gray-600 mb-3">
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{property.address}, {property.lga}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Square className="h-3 w-3" />
+                      <span>{property.size_sqm.toLocaleString()} sqm</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    {property.is_for_sale && property.price && (
+                      <p className="text-lg font-bold text-emerald-600">
+                        {formatPrice(property.price)}
+                      </p>
+                    )}
+                    {property.is_for_lease && property.lease_price_annual && (
+                      <p className="text-md font-semibold text-purple-600">
+                        {formatPrice(property.lease_price_annual)}/year
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {getListedProperties().length === 0 && (
+                <div className="text-center py-8">
+                  <Building2 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600">No listed properties</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
