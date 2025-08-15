@@ -13,7 +13,9 @@ import {
   CheckCircle,
   ArrowLeft,
   Share2,
-  Heart
+  Heart,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Property } from '../types';
 import { mockProperties } from '../data/mockData';
@@ -26,6 +28,7 @@ export function PropertyDetails() {
   const [loading, setLoading] = useState(true);
   const [showContactForm, setShowContactForm] = useState(false);
   const [message, setMessage] = useState('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -42,6 +45,22 @@ export function PropertyDetails() {
     alert('Message sent successfully!');
     setMessage('');
     setShowContactForm(false);
+  };
+
+  const nextImage = () => {
+    if (property?.images && property.images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === property.images!.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (property?.images && property.images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? property.images!.length - 1 : prev - 1
+      );
+    }
   };
 
   const formatPrice = (price: number) => {
@@ -98,11 +117,53 @@ export function PropertyDetails() {
         <div className="lg:col-span-2">
           {/* Property Header */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-            {/* Property Image Placeholder */}
-            <div className="h-64 md:h-80 bg-gradient-to-br from-emerald-100 to-emerald-200 relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Building2 className="h-16 w-16 text-emerald-600" />
-              </div>
+            {/* Property Images */}
+            <div className="h-64 md:h-80 relative overflow-hidden">
+              {property.images && property.images.length > 0 ? (
+                <>
+                  <img
+                    src={property.images[currentImageIndex]}
+                    alt={`${property.title} - Image ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  
+                  {/* Image Navigation */}
+                  {property.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                      
+                      {/* Image Indicators */}
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                        {property.images.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentImageIndex(index)}
+                            className={`w-2 h-2 rounded-full transition-colors ${
+                              index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                  <Building2 className="h-16 w-16 text-emerald-600" />
+                </div>
+              )}
+              
               <div className="absolute top-4 left-4 flex space-x-2">
                 <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium capitalize">
                   {property.property_type}
@@ -193,6 +254,30 @@ export function PropertyDetails() {
               </div>
             </div>
           </div>
+
+          {/* Image Gallery */}
+          {property.images && property.images.length > 1 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Photo Gallery</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {property.images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`relative aspect-square rounded-lg overflow-hidden hover:opacity-80 transition-opacity ${
+                      index === currentImageIndex ? 'ring-2 ring-emerald-500' : ''
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${property.title} - Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Documents */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">

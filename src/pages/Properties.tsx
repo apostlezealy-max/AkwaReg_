@@ -255,9 +255,9 @@ export function Properties() {
             Showing {filteredProperties.length} of {properties.length} properties
           </p>
           <div className="flex items-center space-x-4 text-sm text-gray-500">
-            <span>Total Value: ₦{(mockStats.totalPropertyValue / 1000000000).toFixed(1)}B</span>
+            <span>Total Value: ₦{(filteredProperties.filter(p => p.price).reduce((sum, p) => sum + (p.price || 0), 0) / 1000000000).toFixed(1)}B</span>
             <span>•</span>
-            <span>Avg. Price: ₦{(mockStats.averagePropertyPrice / 1000000).toFixed(1)}M</span>
+            <span>Avg. Price: ₦{filteredProperties.filter(p => p.price).length > 0 ? (filteredProperties.filter(p => p.price).reduce((sum, p) => sum + (p.price || 0), 0) / filteredProperties.filter(p => p.price).length / 1000000).toFixed(1) : 0}M</span>
           </div>
         </div>
       </div>
@@ -291,11 +291,19 @@ export function Properties() {
 
             {/* Property Details */}
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">
-                {property.title}
-              </h3>
-              
-              <div className="flex items-center text-gray-600 mb-3">
+              {/* Property Image */}
+              <div className="h-48 relative overflow-hidden">
+                {property.images && property.images.length > 0 ? (
+                  <img
+                    src={property.images[0]}
+                    alt={property.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                    {getPropertyTypeIcon(property.property_type)}
+                  </div>
+                )}
                 <MapPin className="h-4 w-4 mr-1" />
                 <span className="text-sm">{property.address}, {property.lga}</span>
               </div>
@@ -309,6 +317,13 @@ export function Properties() {
                   <p className="text-xs text-gray-500">Owner</p>
                   <p className="font-medium">{property.owner?.full_name}</p>
                 </div>
+                {property.images && property.images.length > 1 && (
+                  <div className="absolute bottom-4 right-4">
+                    <span className="bg-black/70 text-white px-2 py-1 rounded text-xs">
+                      +{property.images.length - 1} more
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Price */}

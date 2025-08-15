@@ -29,6 +29,7 @@ export interface Property {
   is_for_lease: boolean;
   price?: number;
   lease_price_annual?: number;
+  images?: string[];
   documents: PropertyDocument[];
   verification_notes?: string;
   verified_by?: string;
