@@ -3,8 +3,9 @@ import { mockUsers, User } from '../data/mockData';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, userData: any) => Promise<void>;
+  signOut: () => void;
   isLoading: boolean;
 }
 
@@ -24,7 +25,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check for stored user session
@@ -32,40 +33,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setIsLoading(false);
+    setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
+  const signIn = async (email: string, password: string): Promise<void> => {
+    setLoading(true);
     
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    const foundUser = mockUsers.find(u => u.email === email && u.password === password);
+    // Check test accounts
+    const testAccounts = {
+      'john.doe@email.com': { password: 'password123', user: mockUsers[0] },
+      'sarah.wilson@email.com': { password: 'password123', user: mockUsers[1] },
+      'official@aksgov.ng': { password: 'password123', user: mockUsers[2] },
+      'admin@akwareg.ng': { password: 'password123', user: mockUsers[3] },
+    };
     
-    if (foundUser) {
-      const userWithoutPassword = { ...foundUser };
-      delete userWithoutPassword.password;
-      setUser(userWithoutPassword);
-      localStorage.setItem('akwareg_user', JSON.stringify(userWithoutPassword));
-      setIsLoading(false);
-      return true;
+    const account = testAccounts[email as keyof typeof testAccounts];
+    
+    if (account && account.password === password) {
+      setUser(account.user);
+      localStorage.setItem('akwareg_user', JSON.stringify(account.user));
+      setLoading(false);
+    } else {
+      setLoading(false);
+      throw new Error('Invalid email or password');
     }
-    
-    setIsLoading(false);
-    return false;
   };
 
-  const logout = () => {
+  const signUp = async (email: string, password: string, userData: any): Promise<void> => {
+    setLoading(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // In a real app, this would create the user in the backend
+    // For now, just simulate success
+    setLoading(false);
+  };
+
+  const signOut = () => {
     setUser(null);
     localStorage.removeItem('akwareg_user');
   };
 
   const value = {
     user,
-    login,
-    logout,
-    isLoading
+    signIn,
+    signUp,
+    signOut,
+    loading
   };
 
   return (
