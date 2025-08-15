@@ -10,7 +10,13 @@ import {
   Eye,
   FileText,
   MessageCircle,
-  TrendingUp
+  TrendingUp,
+  Search,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Square
 } from 'lucide-react';
 import { Property, User } from '../types';
 import { mockProperties, mockUsers, mockStats } from '../data/mockData';
@@ -21,7 +27,9 @@ export function Admin() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users' | 'registered' | 'listed'>('overview');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPropertyForInquiry, setSelectedPropertyForInquiry] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -74,6 +82,27 @@ export function Admin() {
     return <Icon className="h-4 w-4" />;
   };
 
+  const getRegisteredProperties = () => {
+    return properties.filter(p => !p.is_for_sale && !p.is_for_lease);
+  };
+
+  const getListedProperties = () => {
+    return properties.filter(p => p.is_for_sale || p.is_for_lease);
+  };
+
+  const formatPrice = (price: number) => {
+    if (price >= 1000000) {
+      return `₦${(price / 1000000).toFixed(1)}M`;
+    }
+    return `₦${price.toLocaleString()}`;
+  };
+
+  const getOwnerImage = (userId: string) => {
+    // Generate a placeholder avatar based on user ID
+    const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500'];
+    const colorIndex = parseInt(userId) % colors.length;
+    return colors[colorIndex];
+  };
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -131,6 +160,26 @@ export function Admin() {
               }`}
             >
               Properties
+            </button>
+            <button
+              onClick={() => setActiveTab('registered')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'registered'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Registered Properties
+            </button>
+            <button
+              onClick={() => setActiveTab('listed')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'listed'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Listed Properties
             </button>
             <button
               onClick={() => setActiveTab('users')}
@@ -396,6 +445,193 @@ export function Admin() {
         </div>
       )}
 
+      {/* Registered Properties Tab */}
+      {activeTab === 'registered' && (
+        <div className="space-y-6">
+          {/* Search Bar */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search registered properties by title, address, or owner..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">Registered Properties</h2>
+                <span className="text-sm text-gray-600">
+                  {getRegisteredProperties().length} properties registered (not for sale/lease)
+                </span>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getRegisteredProperties()
+                  .filter(property => 
+                    !searchTerm || 
+                    property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    property.owner?.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((property) => (
+                    <div
+                      key={property.id}
+                      className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-emerald-100 p-2 rounded-lg">
+                            <Building2 className="h-4 w-4 text-emerald-600" />
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(property.status)}`}>
+                            {property.status.replace('_', ' ')}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => setSelectedPropertyForInquiry(property)}
+                          className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="h-3 w-3" />
+                          <span>{property.address}, {property.lga}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Square className="h-3 w-3" />
+                          <span>{property.size_sqm.toLocaleString()} sqm</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <User className="h-3 w-3" />
+                          <span>Owner: {property.owner?.full_name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              {getRegisteredProperties().length === 0 && (
+                <div className="text-center py-12">
+                  <Building2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600">No registered properties found</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Listed Properties Tab */}
+      {activeTab === 'listed' && (
+        <div className="space-y-6">
+          {/* Search Bar */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search listed properties by title, address, or owner..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">Listed Properties</h2>
+                <span className="text-sm text-gray-600">
+                  {getListedProperties().length} properties listed for sale/lease
+                </span>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getListedProperties()
+                  .filter(property => 
+                    !searchTerm || 
+                    property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    property.owner?.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((property) => (
+                    <div
+                      key={property.id}
+                      className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-emerald-100 p-2 rounded-lg">
+                            <Building2 className="h-4 w-4 text-emerald-600" />
+                          </div>
+                          <div className="flex space-x-1">
+                            {property.is_for_sale && (
+                              <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs">Sale</span>
+                            )}
+                            {property.is_for_lease && (
+                              <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Lease</span>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setSelectedPropertyForInquiry(property)}
+                          className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
+                      <div className="space-y-1 text-sm text-gray-600 mb-3">
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="h-3 w-3" />
+                          <span>{property.address}, {property.lga}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Square className="h-3 w-3" />
+                          <span>{property.size_sqm.toLocaleString()} sqm</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <User className="h-3 w-3" />
+                          <span>Owner: {property.owner?.full_name}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        {property.is_for_sale && property.price && (
+                          <p className="text-lg font-bold text-emerald-600">
+                            {formatPrice(property.price)}
+                          </p>
+                        )}
+                        {property.is_for_lease && property.lease_price_annual && (
+                          <p className="text-md font-semibold text-purple-600">
+                            {formatPrice(property.lease_price_annual)}/year
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              {getListedProperties().length === 0 && (
+                <div className="text-center py-12">
+                  <Building2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600">No listed properties found</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Users Tab */}
       {activeTab === 'users' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -536,6 +772,173 @@ export function Admin() {
               <button
                 onClick={() => setSelectedProperty(null)}
                 className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Property Inquiry Modal */}
+      {selectedPropertyForInquiry && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                Property Information & Owner Details
+              </h3>
+              
+              {/* Property Details */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Property Details</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Title</p>
+                    <p className="text-gray-900">{selectedPropertyForInquiry.title}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Type</p>
+                    <p className="text-gray-900 capitalize">{selectedPropertyForInquiry.property_type}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Address</p>
+                    <p className="text-gray-900">{selectedPropertyForInquiry.address}, {selectedPropertyForInquiry.lga}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Size</p>
+                    <p className="text-gray-900">{selectedPropertyForInquiry.size_sqm.toLocaleString()} sqm</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Status</p>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(selectedPropertyForInquiry.status)}`}>
+                      {selectedPropertyForInquiry.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Availability</p>
+                    <div className="flex space-x-2">
+                      {selectedPropertyForInquiry.is_for_sale && (
+                        <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs">For Sale</span>
+                      )}
+                      {selectedPropertyForInquiry.is_for_lease && (
+                        <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">For Lease</span>
+                      )}
+                      {!selectedPropertyForInquiry.is_for_sale && !selectedPropertyForInquiry.is_for_lease && (
+                        <span className="bg-gray-600 text-white px-2 py-1 rounded text-xs">Registered Only</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Pricing */}
+                {(selectedPropertyForInquiry.is_for_sale || selectedPropertyForInquiry.is_for_lease) && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <h5 className="font-medium text-gray-900 mb-2">Pricing</h5>
+                    <div className="space-y-2">
+                      {selectedPropertyForInquiry.is_for_sale && selectedPropertyForInquiry.price && (
+                        <p className="text-lg font-bold text-emerald-600">
+                          Sale Price: {formatPrice(selectedPropertyForInquiry.price)}
+                        </p>
+                      )}
+                      {selectedPropertyForInquiry.is_for_lease && selectedPropertyForInquiry.lease_price_annual && (
+                        <p className="text-lg font-bold text-purple-600">
+                          Annual Lease: {formatPrice(selectedPropertyForInquiry.lease_price_annual)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Owner Details */}
+              <div className="bg-emerald-50 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-gray-900 mb-4">Property Owner Information</h4>
+                <div className="flex items-start space-x-4">
+                  {/* Owner Avatar */}
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl ${getOwnerImage(selectedPropertyForInquiry.owner_id)}`}>
+                    {selectedPropertyForInquiry.owner?.full_name.charAt(0).toUpperCase()}
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Full Name</p>
+                        <p className="text-gray-900 font-semibold">{selectedPropertyForInquiry.owner?.full_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Role</p>
+                        <p className="text-gray-900 capitalize">{selectedPropertyForInquiry.owner?.role.replace('_', ' ')}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Email</p>
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-gray-500" />
+                          <p className="text-gray-900">{selectedPropertyForInquiry.owner?.email}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Phone</p>
+                        <div className="flex items-center space-x-2">
+                          <Phone className="h-4 w-4 text-gray-500" />
+                          <p className="text-gray-900">{selectedPropertyForInquiry.owner?.phone}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Verification Status</p>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          selectedPropertyForInquiry.owner?.is_verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {selectedPropertyForInquiry.owner?.is_verified ? 'Verified' : 'Pending Verification'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Member Since</p>
+                        <p className="text-gray-900">
+                          {selectedPropertyForInquiry.owner?.created_at ? 
+                            new Date(selectedPropertyForInquiry.owner.created_at).toLocaleDateString() : 
+                            'N/A'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Property Description */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-2">Property Description</h4>
+                <p className="text-gray-700 leading-relaxed">{selectedPropertyForInquiry.description}</p>
+              </div>
+              
+              {/* Documents */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Property Documents</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {selectedPropertyForInquiry.documents.map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <FileText className="h-4 w-4 text-emerald-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 capitalize text-sm">
+                          {doc.document_type.replace('_', ' ')}
+                        </p>
+                        <p className="text-xs text-gray-600">{doc.file_name}</p>
+                      </div>
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setSelectedPropertyForInquiry(null)}
+                className="w-full px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
               >
                 Close
               </button>
