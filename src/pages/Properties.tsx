@@ -267,13 +267,21 @@ export function Properties() {
         {filteredProperties.map((property) => (
           <div
             key={property.id}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group"
+            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col"
           >
-            {/* Property Image Placeholder */}
-            <div className="h-48 bg-gradient-to-br from-emerald-100 to-emerald-200 relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                {getPropertyTypeIcon(property.property_type)}
-              </div>
+            {/* Property Image */}
+            <div className="h-48 relative overflow-hidden bg-gray-100">
+              {property.images && property.images.length > 0 ? (
+                <img
+                  src={property.images[0]}
+                  alt={property.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              ) : (
+                <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                  {getPropertyTypeIcon(property.property_type)}
+                </div>
+              )}
               <div className="absolute top-4 left-4">
                 <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-medium capitalize">
                   {property.property_type}
@@ -287,28 +295,25 @@ export function Properties() {
                   <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Lease</span>
                 )}
               </div>
+              {property.images && property.images.length > 1 && (
+                <div className="absolute bottom-4 right-4">
+                  <span className="bg-black/70 text-white px-2 py-1 rounded text-xs">
+                    +{property.images.length - 1} more
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Property Details */}
-            <div className="p-6">
-              {/* Property Image */}
-              <div className="h-48 relative overflow-hidden">
-                {property.images && property.images.length > 0 ? (
-                  <img
-                    src={property.images[0]}
-                    alt={property.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                    {getPropertyTypeIcon(property.property_type)}
-                  </div>
-                )}
+            <div className="p-6 flex-1 flex flex-col">
+              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{property.title}</h3>
+              
+              <div className="flex items-center text-sm text-gray-600 mb-4">
                 <MapPin className="h-4 w-4 mr-1" />
                 <span className="text-sm">{property.address}, {property.lga}</span>
               </div>
 
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+              <div className="flex items-center justify-between text-sm text-gray-600 mb-4 flex-1">
                 <div className="flex items-center">
                   <Square className="h-4 w-4 mr-1" />
                   <span>{property.size_sqm.toLocaleString()} sqm</span>
@@ -317,17 +322,10 @@ export function Properties() {
                   <p className="text-xs text-gray-500">Owner</p>
                   <p className="font-medium">{property.owner?.full_name}</p>
                 </div>
-                {property.images && property.images.length > 1 && (
-                  <div className="absolute bottom-4 right-4">
-                    <span className="bg-black/70 text-white px-2 py-1 rounded text-xs">
-                      +{property.images.length - 1} more
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* Price */}
-              <div className="mb-4">
+              <div className="mb-4 mt-auto">
                 {property.is_for_sale && (
                   <p className="text-xl font-bold text-emerald-600">
                     {formatPrice(property.price!)}
@@ -341,7 +339,7 @@ export function Properties() {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-auto pt-2">
                 <Link
                   to={`/property/${property.id}`}
                   className="flex items-center space-x-2 text-emerald-600 hover:text-emerald-700 font-medium"
