@@ -87,10 +87,10 @@ export const mockUsers: User[] = [
 export const mockProperties: Property[] = [
   {
     id: '1',
-    title: 'Modern 4-Bedroom Duplex in GRA',
+    title: 'Modern 4-Bedroom Duplex',
     description: 'Beautiful modern duplex with spacious rooms, fitted kitchen, and ample parking space. Located in the prestigious Government Reserved Area with 24/7 security, good road network, and close proximity to schools, hospitals, and shopping centers.',
     property_type: 'residential',
-    address: '15 Udo Udoma Avenue',
+    address: '23 ring road, Uyo',
     lga: 'Uyo',
     state: 'Akwa Ibom',
     size_sqm: 450,
@@ -103,7 +103,7 @@ export const mockProperties: Property[] = [
     is_for_lease: false,
     price: 85000000,
     images: [
-      'https://i.ibb.co/ymFdZZ6b/images-2.jpg',
+      'https://i.ibb.co/1CKgZSS/533758307-1290155313120393-2621006416737027101-n.jpg',
       'https://i.ibb.co/TMLkTvNf/images-3.jpg',
       'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/2121121/pexels-photo-2121121.jpeg?auto=compress&cs=tinysrgb&w=800'
