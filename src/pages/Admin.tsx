@@ -18,7 +18,9 @@ import {
   MapPin,
   Square,
   AlertTriangle,
-  Send
+  Send,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Property, User as UserType } from '../types';
 import { mockProperties, mockUsers, mockStats } from '../data/mockData';
@@ -36,6 +38,9 @@ export function Admin() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactMessage, setContactMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showPropertyModal, setShowPropertyModal] = useState(false);
+  const [showUpdateRequestModal, setShowUpdateRequestModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -103,6 +108,22 @@ export function Admin() {
     toast.success('Message sent to property owner successfully');
     setContactMessage('');
     setShowContactModal(false);
+  };
+
+  const nextImage = () => {
+    if (selectedProperty?.images && selectedProperty.images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === selectedProperty.images!.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedProperty?.images && selectedProperty.images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? selectedProperty.images!.length - 1 : prev - 1
+      );
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -494,7 +515,11 @@ export function Admin() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={() => setSelectedProperty(property)}
+                        onClick={() => {
+                          setSelectedProperty(property);
+                          setCurrentImageIndex(0);
+                          setShowPropertyModal(true);
+                        }}
                         className="text-emerald-600 hover:text-emerald-700 mr-3"
                       >
                         <Eye className="h-4 w-4" />
@@ -768,6 +793,16 @@ export function Admin() {
                         <button
                           onClick={() => {
                             setSelectedUpdateRequest(property);
+                            setCurrentImageIndex(0);
+                            setShowUpdateRequestModal(true);
+                          }}
+                          className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedUpdateRequest(property);
                             setShowContactModal(true);
                           }}
                           className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -858,6 +893,316 @@ export function Admin() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Property Details Modal */}
+      {showPropertyModal && selectedProperty && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Property Details</h3>
+                <button
+                  onClick={() => {
+                    setShowPropertyModal(false);
+                    setSelectedProperty(null);
+                    setCurrentImageIndex(0);
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {/* Property Images */}
+              {selectedProperty.images && selectedProperty.images.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-md font-semibold text-gray-900 mb-3">Property Images</h4>
+                  
+                  {/* Main Image Display */}
+                  <div className="relative h-64 md:h-80 mb-4 rounded-lg overflow-hidden">
+                    <img
+                      src={selectedProperty.images[currentImageIndex]}
+                      alt={`${selectedProperty.title} - Image ${currentImageIndex + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Image Navigation */}
+                    {selectedProperty.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={prevImage}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={nextImage}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+                        
+                        {/* Image Counter */}
+                        <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                          {currentImageIndex + 1} / {selectedProperty.images.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Image Thumbnails */}
+                  {selectedProperty.images.length > 1 && (
+                    <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                      {selectedProperty.images.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`relative aspect-square rounded-lg overflow-hidden hover:opacity-80 transition-opacity ${
+                            index === currentImageIndex ? 'ring-2 ring-emerald-500' : ''
+                          }`}
+                        >
+                          <img
+                            src={image}
+                            alt={`${selectedProperty.title} - Thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Property Details */}
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-xl">{selectedProperty.title}</h4>
+                  <p className="text-gray-600">{selectedProperty.address}, {selectedProperty.lga}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Owner</p>
+                  <p className="text-gray-900">{selectedProperty.owner?.full_name}</p>
+                  <p className="text-sm text-gray-600">{selectedProperty.owner?.email}</p>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Description</p>
+                  <p className="text-gray-900">{selectedProperty.description}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Type</p>
+                    <p className="text-gray-900 capitalize">{selectedProperty.property_type}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Size</p>
+                    <p className="text-gray-900">{selectedProperty.size_sqm.toLocaleString()} sqm</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Documents</p>
+                  <div className="space-y-2">
+                    {selectedProperty.documents.map((doc) => (
+                      <div key={doc.id} className="flex items-center space-x-2 p-2 bg-gray-50 rounded">
+                        <FileText className="h-4 w-4 text-emerald-600" />
+                        <span className="text-sm text-gray-700 capitalize">
+                          {doc.document_type.replace('_', ' ')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              {selectedProperty.status === 'pending' || selectedProperty.status === 'under_review' ? (
+                <div className="flex space-x-3 mt-6">
+                  <button
+                    onClick={() => handlePropertyAction(selectedProperty.id, 'reject')}
+                    className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    onClick={() => handlePropertyAction(selectedProperty.id, 'approve')}
+                    className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Approve
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-600">
+                    This property has already been {selectedProperty.status}.
+                  </p>
+                  {selectedProperty.verification_notes && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      Notes: {selectedProperty.verification_notes}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Request Details Modal */}
+      {showUpdateRequestModal && selectedUpdateRequest && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Update Request Details</h3>
+                <button
+                  onClick={() => {
+                    setShowUpdateRequestModal(false);
+                    setSelectedUpdateRequest(null);
+                    setCurrentImageIndex(0);
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {/* Property Images */}
+              {selectedUpdateRequest.images && selectedUpdateRequest.images.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-md font-semibold text-gray-900 mb-3">Property Images</h4>
+                  
+                  {/* Main Image Display */}
+                  <div className="relative h-64 md:h-80 mb-4 rounded-lg overflow-hidden">
+                    <img
+                      src={selectedUpdateRequest.images[currentImageIndex]}
+                      alt={`${selectedUpdateRequest.title} - Image ${currentImageIndex + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Image Navigation */}
+                    {selectedUpdateRequest.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={prevImage}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={nextImage}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+                        
+                        {/* Image Counter */}
+                        <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                          {currentImageIndex + 1} / {selectedUpdateRequest.images.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Image Thumbnails */}
+                  {selectedUpdateRequest.images.length > 1 && (
+                    <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                      {selectedUpdateRequest.images.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`relative aspect-square rounded-lg overflow-hidden hover:opacity-80 transition-opacity ${
+                            index === currentImageIndex ? 'ring-2 ring-emerald-500' : ''
+                          }`}
+                        >
+                          <img
+                            src={image}
+                            alt={`${selectedUpdateRequest.title} - Thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Property and Request Details */}
+              <div className="space-y-6">
+                {/* Property Information */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-xl mb-2">{selectedUpdateRequest.title}</h4>
+                  <p className="text-gray-600 mb-4">{selectedUpdateRequest.address}, {selectedUpdateRequest.lga}</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Owner</p>
+                      <p className="text-gray-900">{selectedUpdateRequest.owner?.full_name}</p>
+                      <p className="text-sm text-gray-600">{selectedUpdateRequest.owner?.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Property Type</p>
+                      <p className="text-gray-900 capitalize">{selectedUpdateRequest.property_type}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Update Request Information */}
+                {selectedUpdateRequest.update_request && (
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <h5 className="font-semibold text-gray-900 mb-3">Update Request Details</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Requested Status</p>
+                        <p className="text-gray-900 capitalize font-semibold">
+                          {selectedUpdateRequest.update_request.new_status}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Request Date</p>
+                        <p className="text-gray-900">
+                          {new Date(selectedUpdateRequest.update_request.requested_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      {selectedUpdateRequest.update_request.sold_price && (
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">Sale Price</p>
+                          <p className="text-gray-900 font-semibold">
+                            {formatPrice(selectedUpdateRequest.update_request.sold_price)}
+                          </p>
+                        </div>
+                      )}
+                      {selectedUpdateRequest.update_request.reason && (
+                        <div className="md:col-span-2">
+                          <p className="text-sm font-medium text-gray-700">Reason</p>
+                          <p className="text-gray-900">{selectedUpdateRequest.update_request.reason}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Action Buttons */}
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handleUpdateRequest(selectedUpdateRequest.id, 'reject')}
+                    className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    Reject Request
+                  </button>
+                  <button
+                    onClick={() => handleUpdateRequest(selectedUpdateRequest.id, 'approve')}
+                    className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Approve Request
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
