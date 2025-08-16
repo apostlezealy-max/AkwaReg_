@@ -80,7 +80,7 @@ export const mockUsers: User[] = [
     role: 'government_official',
     is_verified: true,
     created_at: '2025-01-05T08:00:00Z',
-    updated_at: '2025-01-05T08:00:00Z',
+    updated_at: '2025-02-06T08:00:00Z',
   },
 ];
 
