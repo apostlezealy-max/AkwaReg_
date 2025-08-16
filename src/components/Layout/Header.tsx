@@ -110,12 +110,6 @@ export function Header() {
           ) : (
             <div className="flex items-center space-x-4">
               <Link
-                to="/properties"
-                className="text-gray-600 hover:text-emerald-600 transition-colors"
-              >
-                Browse Properties
-              </Link>
-              <Link
                 to="/auth"
                 className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors"
               >
