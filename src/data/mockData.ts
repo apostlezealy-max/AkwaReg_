@@ -393,7 +393,7 @@ export const mockProperties: Property[] = [
     is_for_lease: true,
     lease_price_annual: 1800000,
     images: [
-      'https://images.pexels.com/photos/1571453/pexels-photo-1571453.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://i.ibb.co/Xft1KjMD/2-Bedroom-Akpan-Andem-Market.jpg',
       'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800'
     ],
