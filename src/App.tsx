@@ -48,64 +48,58 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function AppContent() {
-  return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/properties" element={<Properties />} />
-        <Route path="/property/:id" element={<PropertyDetails />} />
-        <Route 
-          path="/auth" 
-          element={
-            <PublicRoute>
-              <Auth />
-            </PublicRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/messages" 
-          element={
-            <ProtectedRoute>
-              <Messages />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/register-property" 
-          element={
-            <ProtectedRoute>
-              <RegisterProperty />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/admin" 
-          element={
-            <ProtectedRoute>
-              <Admin />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
-  );
-}
-
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppContent />
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/properties" element={<Properties />} />
+            <Route path="/property/:id" element={<PropertyDetails />} />
+            <Route 
+              path="/auth" 
+              element={
+                <PublicRoute>
+                  <Auth />
+                </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/messages" 
+              element={
+                <ProtectedRoute>
+                  <Messages />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/register-property" 
+              element={
+                <ProtectedRoute>
+                  <RegisterProperty />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Layout>
         <Toaster 
           position="top-right"
           toastOptions={{
