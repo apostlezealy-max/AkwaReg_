@@ -118,7 +118,7 @@ export function PropertyDetails() {
           {/* Property Header */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
             {/* Property Images */}
-            <div className="h-64 md:h-80 relative overflow-hidden">
+            <div className="h-64 md:h-80 relative overflow-hidden bg-gray-100">
               {property.images && property.images.length > 0 ? (
                 <>
                   <img
@@ -264,7 +264,7 @@ export function PropertyDetails() {
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`relative aspect-square rounded-lg overflow-hidden hover:opacity-80 transition-opacity ${
+                    className={`relative aspect-square rounded-lg overflow-hidden hover:opacity-80 transition-opacity bg-gray-100 ${
                       index === currentImageIndex ? 'ring-2 ring-emerald-500' : ''
                     }`}
                   >

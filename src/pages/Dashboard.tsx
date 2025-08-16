@@ -166,7 +166,7 @@ export default function Dashboard() {
               {getRegisteredProperties().slice(0, 3).map((property) => (
                 <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   {/* Property Image */}
-                  <div className="h-32 mb-3 rounded-lg overflow-hidden">
+                  <div className="h-32 mb-3 rounded-lg overflow-hidden bg-gray-200">
                     {property.images && property.images.length > 0 ? (
                       <img
                         src={property.images[0]}
@@ -251,7 +251,7 @@ export default function Dashboard() {
               {getListedProperties().slice(0, 3).map((property) => (
                 <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   {/* Property Image */}
-                  <div className="h-32 mb-3 rounded-lg overflow-hidden">
+                  <div className="h-32 mb-3 rounded-lg overflow-hidden bg-gray-200">
                     {property.images && property.images.length > 0 ? (
                       <img
                         src={property.images[0]}
@@ -353,7 +353,7 @@ export default function Dashboard() {
               {getSoldProperties().slice(0, 3).map((property) => (
                 <div key={property.id} className="p-4 bg-gray-50 rounded-lg">
                   {/* Property Image */}
-                  <div className="h-32 mb-3 rounded-lg overflow-hidden">
+                  <div className="h-32 mb-3 rounded-lg overflow-hidden bg-gray-200">
                     {property.images && property.images.length > 0 ? (
                       <img
                         src={property.images[0]}
@@ -435,7 +435,7 @@ export default function Dashboard() {
               </div>
               
               {/* Property Image */}
-              <div className="h-48 mb-4 rounded-lg overflow-hidden">
+              <div className="h-48 mb-4 rounded-lg overflow-hidden bg-gray-200">
                 {selectedProperty.images && selectedProperty.images.length > 0 ? (
                   <img
                     src={selectedProperty.images[0]}
