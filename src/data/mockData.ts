@@ -105,7 +105,7 @@ export const mockProperties: Property[] = [
     images: [
       'https://i.ibb.co/1CKgZSS/533758307-1290155313120393-2621006416737027101-n.jpg',
       'https://i.ibb.co/LD7hsGk9/533130435-1290155356453722-4761629618312817112-n.jpg',
-      'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://i.ibb.co/ymf9j7LG/533077425-1290155563120368-5480003215149289107-n.jpg',
       'https://images.pexels.com/photos/2121121/pexels-photo-2121121.jpeg?auto=compress&cs=tinysrgb&w=800'
     ],
     documents: [
