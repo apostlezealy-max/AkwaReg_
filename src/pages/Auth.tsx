@@ -280,17 +280,6 @@ export function Auth() {
           )}
         </div>
 
-        <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="ml-1 text-emerald-600 hover:text-emerald-700 font-semibold"
-            >
-              {isLogin ? 'Sign Up' : 'Sign In'}
-            </button>
-          </p>
-        </div>
       </div>
     </div>
   );
