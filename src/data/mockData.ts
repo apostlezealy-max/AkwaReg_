@@ -390,7 +390,7 @@ export const mockProperties: Property[] = [
     availability_status: 'available',
     is_for_sale: false,
     is_for_lease: true,
-    lease_price_annual: 1800000,
+    lease_price_annual: 800000,
     images: [
       'https://i.ibb.co/Xft1KjMD/2-Bedroom-Akpan-Andem-Market.jpg',
       'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800',
