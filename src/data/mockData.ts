@@ -476,7 +476,7 @@ export const mockProperties: Property[] = [
       admin_approved: false,
     },
     images: [
-      'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://i.ibb.co/ksrTrdBb/images-9.jpg',
       'https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=800'
     ],
