@@ -222,12 +222,12 @@ export function RegisterProperty() {
       </div>
 
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             
             {/* Column 1: Basic Information */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-2">
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-3">
                 <Building2 className="h-4 w-4 text-emerald-600" />
                 <span>Basic Information</span>
               </h2>
@@ -299,7 +299,7 @@ export function RegisterProperty() {
               </div>
 
               {/* Location Section */}
-              <h3 className="text-md font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-2 mt-6">
+              <h3 className="text-md font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-3 mt-8">
                 <MapPin className="h-4 w-4 text-emerald-600" />
                 <span>Location</span>
               </h3>
@@ -354,8 +354,8 @@ export function RegisterProperty() {
             </div>
 
             {/* Column 2: Images, Pricing & Amenities */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-2">
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-3">
                 <ImageIcon className="h-4 w-4 text-emerald-600" />
                 <span>Images & Pricing</span>
               </h2>
@@ -409,13 +409,14 @@ export function RegisterProperty() {
 
               {/* Availability & Pricing */}
               <div>
-                <h3 className="text-md font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-2">
+                <h3 className="text-md font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-3">
                   <Square className="h-4 w-4 text-emerald-600" />
                   <span>Availability & Pricing</span>
+                  <span className="text-xs text-gray-500 font-normal">(Optional)</span>
                 </h3>
                 
-                <div className="space-y-3 mt-3">
-                  <div className="flex flex-col space-y-2">
+                <div className="space-y-4 mt-4">
+                  <div className="flex flex-col space-y-3">
                     <label className="flex items-center">
                       <input
                         {...form.register('is_for_sale')}
@@ -477,11 +478,12 @@ export function RegisterProperty() {
               {/* Amenities */}
               {showAmenities && (
                 <div>
-                  <h3 className="text-md font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-2">
+                  <h3 className="text-md font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-3">
                     <Star className="h-4 w-4 text-emerald-600" />
                     <span>Amenities</span>
+                    <span className="text-xs text-gray-500 font-normal">(Optional)</span>
                   </h3>
-                  <div className="grid grid-cols-1 gap-2 mt-3 max-h-48 overflow-y-auto">
+                  <div className="grid grid-cols-1 gap-3 mt-4 max-h-48 overflow-y-auto">
                     {amenitiesList.map((amenity) => (
                       <label key={amenity} className="flex items-center">
                         <input
@@ -504,20 +506,20 @@ export function RegisterProperty() {
             </div>
 
             {/* Column 3: Documents */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-2">
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 border-b border-gray-200 pb-3">
                 <FileText className="h-4 w-4 text-emerald-600" />
                 <span>Property Documents</span>
               </h2>
 
               {/* Certificate of Occupancy */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Certificate of Occupancy
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-2">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-3">
                   {documents.certificate_of_occupancy ? (
-                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <div className="flex items-center space-x-2">
                         <FileText className="h-3 w-3 text-emerald-600" />
                         <span className="text-xs text-gray-700 truncate">{documents.certificate_of_occupancy.name}</span>
@@ -553,12 +555,12 @@ export function RegisterProperty() {
 
               {/* Deed of Assignment */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Deed of Assignment
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-2">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-3">
                   {documents.deed_of_assignment ? (
-                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <div className="flex items-center space-x-2">
                         <FileText className="h-3 w-3 text-emerald-600" />
                         <span className="text-xs text-gray-700 truncate">{documents.deed_of_assignment.name}</span>
@@ -594,12 +596,12 @@ export function RegisterProperty() {
 
               {/* Survey Plan */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Survey Plan
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-2">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-3">
                   {documents.survey_plan ? (
-                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <div className="flex items-center space-x-2">
                         <FileText className="h-3 w-3 text-emerald-600" />
                         <span className="text-xs text-gray-700 truncate">{documents.survey_plan.name}</span>
@@ -635,12 +637,12 @@ export function RegisterProperty() {
 
               {/* Building Approval */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Building Approval
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-2">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-3">
                   {documents.building_approval ? (
-                    <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <div className="flex items-center space-x-2">
                         <FileText className="h-3 w-3 text-emerald-600" />
                         <span className="text-xs text-gray-700 truncate">{documents.building_approval.name}</span>
@@ -676,11 +678,11 @@ export function RegisterProperty() {
 
               {/* Other Documents */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Other Documents
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-2">
-                  <div className="text-center mb-2">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-3">
+                  <div className="text-center mb-3">
                     <input
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
@@ -698,11 +700,11 @@ export function RegisterProperty() {
                   </div>
 
                   {documents.other.length > 0 && (
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
                       {documents.other.map((file, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-1 bg-gray-50 rounded"
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded"
                         >
                           <div className="flex items-center space-x-1">
                             <FileText className="h-3 w-3 text-emerald-600" />
@@ -725,18 +727,18 @@ export function RegisterProperty() {
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
+          <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="bg-emerald-600 text-white px-8 py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {loading ? 'Registering...' : 'Register Property'}
             </button>
