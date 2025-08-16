@@ -101,7 +101,7 @@ export const mockProperties: Property[] = [
     availability_status: 'available',
     is_for_sale: true,
     is_for_lease: false,
-    price: 85000000,
+    price: 850000,
     images: [
       'https://i.ibb.co/1CKgZSS/533758307-1290155313120393-2621006416737027101-n.jpg',
       'https://i.ibb.co/LD7hsGk9/533130435-1290155356453722-4761629618312817112-n.jpg',
