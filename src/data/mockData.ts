@@ -151,7 +151,7 @@ export const mockProperties: Property[] = [
     lease_price_annual: 12000000,
     images: [
       'https://i.ibb.co/FL2671mf/large-business-building-at-ikot-ekpene-road-for-sale-x-MOm-L7cevbz-E5ted-DWvx.jpg',
-      'https://images.pexels.com/photos/2467558/pexels-photo-2467558.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://i.ibb.co/pj61cQzR/shop2.jpg',
       'https://images.pexels.com/photos/1170412/pexels-photo-1170412.jpeg?auto=compress&cs=tinysrgb&w=800'
     ],
     documents: [
