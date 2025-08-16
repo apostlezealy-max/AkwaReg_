@@ -103,7 +103,7 @@ export const mockProperties: Property[] = [
     is_for_lease: false,
     price: 85000000,
     images: [
-      'https://images.app.goo.gl/4C2MNLHNjCPmJYxe8',
+      'https://i.ibb.co/ymFdZZ6b/images-2.jpg',
       'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/2121121/pexels-photo-2121121.jpeg?auto=compress&cs=tinysrgb&w=800'
