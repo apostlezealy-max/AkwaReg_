@@ -512,8 +512,8 @@ export const mockProperties: Property[] = [
     is_for_sale: false,
     is_for_lease: false,
     images: [
-      'https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://i.ibb.co/Df3F7HDq/images-21.jpg',
+      'https://i.ibb.co/c4JtBfc/images-19.jpg',
     ],
     documents: [
       {
