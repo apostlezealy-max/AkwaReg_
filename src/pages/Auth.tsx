@@ -117,6 +117,7 @@ export function Auth() {
           </div>
 
           {isLogin ? (
+            <>
             <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -178,7 +179,9 @@ export function Auth() {
                 </button>
               </p>
             </div>
+            </>
           ) : (
+            <>
             <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -301,6 +304,7 @@ export function Auth() {
                 </button>
               </p>
             </div>
+            </>
           )}
         </div>
 
