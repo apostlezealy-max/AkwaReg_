@@ -109,12 +109,23 @@ export function Properties() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Browse Properties
-        </h1>
-        <p className="text-gray-600">
-          Discover verified properties across Akwa Ibom State
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Browse Properties
+            </h1>
+            <p className="text-gray-600">
+              Discover verified properties across Akwa Ibom State
+            </p>
+          </div>
+          <Link
+            to="/register-property"
+            className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors flex items-center space-x-2"
+          >
+            <Building2 className="h-5 w-5" />
+            <span>Register Property</span>
+          </Link>
+        </div>
       </div>
 
       {/* Search and Filters */}
