@@ -262,6 +262,7 @@ export const mockProperties: Property[] = [
     sold_price: 145000000,
     sold_at: '2025-08-01T10:00:00Z',
     images: [
+      'https://i.ibb.co/0jBtyKs6/images-24.jpg',
       'https://i.ibb.co/YFChsP3R/images-25.jpg',
       'https://i.ibb.co/6RhTmttM/images-28.jpg',
       'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800',
