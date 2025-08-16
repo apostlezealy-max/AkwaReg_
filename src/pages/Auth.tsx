@@ -290,16 +290,6 @@ export function Auth() {
               {isLogin ? 'Sign Up' : 'Sign In'}
             </button>
           </p>
-          
-          {/* Test Accounts Info */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm font-medium text-blue-900 mb-2">Test Accounts:</p>
-            <div className="text-xs text-blue-800 space-y-1">
-              <p><strong>Property Owner:</strong> john.doe@email.com / password123</p>
-              <p><strong>Government Official:</strong> official@aksgov.ng / password123</p>
-              <p><strong>Admin:</strong> admin@akwareg.ng / password123</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
