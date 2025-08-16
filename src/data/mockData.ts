@@ -87,10 +87,10 @@ export const mockUsers: User[] = [
 export const mockProperties: Property[] = [
   {
     id: '1',
-    title: 'Modern 4-Bedroom Duplex',
+    title: 'Decent 4-Bedroom flat',
     description: 'Beautiful modern duplex with spacious rooms, fitted kitchen, and ample parking space. Located in the prestigious Government Reserved Area with 24/7 security, good road network, and close proximity to schools, hospitals, and shopping centers.',
     property_type: 'residential',
-    address: '23 ring road, Uyo',
+    address: '23 ring road',
     lga: 'Uyo',
     state: 'Akwa Ibom',
     size_sqm: 450,
