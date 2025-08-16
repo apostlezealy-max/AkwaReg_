@@ -166,6 +166,18 @@ export function Auth() {
                 {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
+            
+            <div className="text-center mt-6">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{' '}
+                <button
+                  onClick={() => setIsLogin(false)}
+                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                >
+                  Sign up
+                </button>
+              </p>
+            </div>
           ) : (
             <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-6">
               <div>
@@ -277,6 +289,18 @@ export function Auth() {
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
+            
+            <div className="text-center mt-6">
+              <p className="text-sm text-gray-600">
+                Already have an account?{' '}
+                <button
+                  onClick={() => setIsLogin(true)}
+                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                >
+                  Sign in
+                </button>
+              </p>
+            </div>
           )}
         </div>
 
