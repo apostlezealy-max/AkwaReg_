@@ -164,14 +164,14 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {getRegisteredProperties().slice(0, 3).map((property) => (
-                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
                   {/* Property Image */}
-                  <div className="h-32 mb-3 rounded-lg overflow-hidden bg-gray-200">
+                  <div className="aspect-video mb-3 rounded-lg overflow-hidden bg-gray-200">
                     {property.images && property.images.length > 0 ? (
                       <img
                         src={property.images[0]}
                         alt={property.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
@@ -249,14 +249,14 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {getListedProperties().slice(0, 3).map((property) => (
-                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
                   {/* Property Image */}
-                  <div className="h-32 mb-3 rounded-lg overflow-hidden bg-gray-200">
+                  <div className="aspect-video mb-3 rounded-lg overflow-hidden bg-gray-200">
                     {property.images && property.images.length > 0 ? (
                       <img
                         src={property.images[0]}
                         alt={property.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
@@ -351,14 +351,14 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {getSoldProperties().slice(0, 3).map((property) => (
-                <div key={property.id} className="p-4 bg-gray-50 rounded-lg">
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg group">
                   {/* Property Image */}
-                  <div className="h-32 mb-3 rounded-lg overflow-hidden bg-gray-200">
+                  <div className="aspect-video mb-3 rounded-lg overflow-hidden bg-gray-200">
                     {property.images && property.images.length > 0 ? (
                       <img
                         src={property.images[0]}
                         alt={property.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
@@ -435,7 +435,7 @@ export default function Dashboard() {
               </div>
               
               {/* Property Image */}
-              <div className="h-48 mb-4 rounded-lg overflow-hidden bg-gray-200">
+              <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-gray-200">
                 {selectedProperty.images && selectedProperty.images.length > 0 ? (
                   <img
                     src={selectedProperty.images[0]}
