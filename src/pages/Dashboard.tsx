@@ -164,63 +164,68 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {getRegisteredProperties().slice(0, 3).map((property) => (
-                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group flex items-start">
                   {/* Property Image */}
-                  <div className="aspect-video mb-3 rounded-lg overflow-hidden bg-gray-200">
-                    {property.images && property.images.length > 0 ? (
-                      <img
-                        src={property.images[0]}
-                        alt={property.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                        <Building2 className="h-8 w-8 text-emerald-600" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="bg-emerald-100 p-2 rounded-lg">
-                        <Building2 className="h-4 w-4 text-emerald-600" />
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDashboardStatusBadge(property.status)}`}>
-                        {property.status.replace('_', ' ')}
-                      </span>
-                      {property.availability_status && (
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(property.availability_status)}`}>
-                          {property.availability_status}
-                        </span>
+                  <div className="w-2/5">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-gray-200">
+                      {property.images && property.images.length > 0 ? (
+                        <img
+                          src={property.images[0]}
+                          alt={property.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                          <Building2 className="h-8 w-8 text-emerald-600" />
+                        </div>
                       )}
                     </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedProperty(property)}
-                        className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedProperty(property);
-                          setShowUpdateModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                    </div>
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{property.address}, {property.lga}</span>
+                  
+                  {/* Property Details */}
+                  <div className="flex-1 ml-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="bg-emerald-100 p-2 rounded-lg">
+                          <Building2 className="h-4 w-4 text-emerald-600" />
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDashboardStatusBadge(property.status)}`}>
+                          {property.status.replace('_', ' ')}
+                        </span>
+                        {property.availability_status && (
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(property.availability_status)}`}>
+                            {property.availability_status}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setSelectedProperty(property)}
+                          className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedProperty(property);
+                            setShowUpdateModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Square className="h-3 w-3" />
-                      <span>{property.size_sqm.toLocaleString()} sqm</span>
+                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{property.title}</h3>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <div className="flex items-center space-x-1">
+                        <MapPin className="h-3 w-3" />
+                        <span>{property.address}, {property.lga}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Square className="h-3 w-3" />
+                        <span>{property.size_sqm.toLocaleString()} sqm</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -249,81 +254,86 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {getListedProperties().slice(0, 3).map((property) => (
-                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group flex items-start">
                   {/* Property Image */}
-                  <div className="aspect-video mb-3 rounded-lg overflow-hidden bg-gray-200">
-                    {property.images && property.images.length > 0 ? (
-                      <img
-                        src={property.images[0]}
-                        alt={property.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                        <Building2 className="h-8 w-8 text-emerald-600" />
-                      </div>
-                    )}
+                  <div className="w-2/5">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-gray-200">
+                      {property.images && property.images.length > 0 ? (
+                        <img
+                          src={property.images[0]}
+                          alt={property.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                          <Building2 className="h-8 w-8 text-emerald-600" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="bg-emerald-100 p-2 rounded-lg">
-                        <Building2 className="h-4 w-4 text-emerald-600" />
+                  {/* Property Details */}
+                  <div className="flex-1 ml-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="bg-emerald-100 p-2 rounded-lg">
+                          <Building2 className="h-4 w-4 text-emerald-600" />
+                        </div>
+                        <div className="flex space-x-1">
+                          {property.is_for_sale && (
+                            <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs">Sale</span>
+                          )}
+                          {property.is_for_lease && (
+                            <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Lease</span>
+                          )}
+                          {property.availability_status && (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(property.availability_status)}`}>
+                              {property.availability_status}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex space-x-1">
-                        {property.is_for_sale && (
-                          <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs">Sale</span>
-                        )}
-                        {property.is_for_lease && (
-                          <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Lease</span>
-                        )}
-                        {property.availability_status && (
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(property.availability_status)}`}>
-                            {property.availability_status}
-                          </span>
-                        )}
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setSelectedProperty(property)}
+                          className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedProperty(property);
+                            setShowUpdateModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedProperty(property)}
-                        className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedProperty(property);
-                          setShowUpdateModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
+                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{property.title}</h3>
+                    <div className="space-y-1 text-sm text-gray-600 mb-2">
+                      <div className="flex items-center space-x-1">
+                        <MapPin className="h-3 w-3" />
+                        <span>{property.address}, {property.lga}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Square className="h-3 w-3" />
+                        <span>{property.size_sqm.toLocaleString()} sqm</span>
+                      </div>
                     </div>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
-                  <div className="space-y-1 text-sm text-gray-600 mb-3">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{property.address}, {property.lga}</span>
+                    <div className="space-y-1">
+                      {property.is_for_sale && property.price && (
+                        <p className="text-lg font-bold text-emerald-600">
+                          {formatPrice(property.price)}
+                        </p>
+                      )}
+                      {property.is_for_lease && property.lease_price_annual && (
+                        <p className="text-md font-semibold text-purple-600">
+                          {formatPrice(property.lease_price_annual)}/year
+                        </p>
+                      )}
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Square className="h-3 w-3" />
-                      <span>{property.size_sqm.toLocaleString()} sqm</span>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    {property.is_for_sale && property.price && (
-                      <p className="text-lg font-bold text-emerald-600">
-                        {formatPrice(property.price)}
-                      </p>
-                    )}
-                    {property.is_for_lease && property.lease_price_annual && (
-                      <p className="text-md font-semibold text-purple-600">
-                        {formatPrice(property.lease_price_annual)}/year
-                      </p>
-                    )}
                   </div>
                 </div>
               ))}
@@ -351,60 +361,65 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {getSoldProperties().slice(0, 3).map((property) => (
-                <div key={property.id} className="p-4 bg-gray-50 rounded-lg group">
+                <div key={property.id} className="p-4 bg-gray-50 rounded-lg group flex items-start">
                   {/* Property Image */}
-                  <div className="aspect-video mb-3 rounded-lg overflow-hidden bg-gray-200">
-                    {property.images && property.images.length > 0 ? (
-                      <img
-                        src={property.images[0]}
-                        alt={property.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                        <Building2 className="h-8 w-8 text-emerald-600" />
-                      </div>
-                    )}
+                  <div className="w-2/5">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-gray-200">
+                      {property.images && property.images.length > 0 ? (
+                        <img
+                          src={property.images[0]}
+                          alt={property.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                          <Building2 className="h-8 w-8 text-emerald-600" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="bg-green-100 p-2 rounded-lg">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                  {/* Property Details */}
+                  <div className="flex-1 ml-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="bg-green-100 p-2 rounded-lg">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        </div>
+                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                          Sold
+                        </span>
                       </div>
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                        Sold
-                      </span>
+                      <button
+                        onClick={() => setSelectedProperty(property)}
+                        className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => setSelectedProperty(property)}
-                      className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{property.title}</h3>
-                  <div className="space-y-1 text-sm text-gray-600 mb-3">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{property.address}, {property.lga}</span>
+                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{property.title}</h3>
+                    <div className="space-y-1 text-sm text-gray-600 mb-2">
+                      <div className="flex items-center space-x-1">
+                        <MapPin className="h-3 w-3" />
+                        <span>{property.address}, {property.lga}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Square className="h-3 w-3" />
+                        <span>{property.size_sqm.toLocaleString()} sqm</span>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Square className="h-3 w-3" />
-                      <span>{property.size_sqm.toLocaleString()} sqm</span>
+                    <div className="space-y-1">
+                      {property.sold_price && (
+                        <p className="text-lg font-bold text-green-600">
+                          Sold for {formatPrice(property.sold_price)}
+                        </p>
+                      )}
+                      {property.sold_at && (
+                        <p className="text-xs text-gray-500">
+                          Sold on {new Date(property.sold_at).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
-                  </div>
-                  <div className="space-y-1">
-                    {property.sold_price && (
-                      <p className="text-lg font-bold text-green-600">
-                        Sold for {formatPrice(property.sold_price)}
-                      </p>
-                    )}
-                    {property.sold_at && (
-                      <p className="text-xs text-gray-500">
-                        Sold on {new Date(property.sold_at).toLocaleDateString()}
-                      </p>
-                    )}
                   </div>
                 </div>
               ))}
